@@ -9,14 +9,15 @@ import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import Rank from './components/Rank/Rank';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import './App.css';
+const { CLARIFAI_API_KEY } = process.env
 
 const app = new Clarifai.App({
-  apiKey: 'cffd958a5c004502b559cd904a1892e6'
+  apiKey: CLARIFAI_API_KEY || 'cffd958a5c004502b559cd904a1892e6'
 })
 
-const particlesOptions = {
-  particles: {
-    number: {
+const particlesOptions = 
+{ particles:
+  { number: {
       value: 30,
       density: {
         enable: true,
@@ -64,16 +65,13 @@ class App extends Component {
       .predict(
         Clarifai.FACE_DETECT_MODEL,
         this.state.input)
-      .then(response => this.displayFaceBox(this.calculateFaceLocation(response)))
+      .then(resp => this.displayFaceBox(this.calculateFaceLocation(resp)))
       .catch(err => console.log(err)); 
   }
 
   onRouteChange = (route) => {
-    if (route === 'home') {
-      this.setState({ isSignedIn: true });
-    } else if (route === 'signout') {
-      this.setState({ isSignedIn: false });
-    }
+    if (route === 'home') { this.setState({ isSignedIn: true });}
+    else if (route === 'signout') { this.setState({ isSignedIn: false });}
     this.setState({ route });
   }
 
@@ -84,10 +82,10 @@ class App extends Component {
       <div className="App">
         <Particles className="particles" params={particlesOptions} />
         <Navigation isSignedIn={isSignedIn} onRouteChange={onRouteChange} />
+        <Logo />
         { route === 'home'
         ? 
         <div>
-          <Logo />
           <Rank />
           <ImageLinkForm onInputChange={onInputChange} onButtonSubmit={onSubmit} />
           <FaceRecognition box={box} imageUrl={imageUrl} />
